@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.0
+  version: 1.1.0
   title: Megasense data portal API
 security:
   - bearerAuth: []
@@ -575,7 +575,7 @@ paths:
   /v1/users:
     post:
       summary: Creates new user
-      operationId: createUser
+      operationId: createUser_1_0
       description: Creates new user
       tags:
         - Users
@@ -585,7 +585,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: "#/components/schemas/User_1_0"
+      responses:
+        "200":
+          description: User settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User_1_0"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1.1/users:
+    post:
+      summary: Create new user
+      operationId: createUser
+      description: Create new user with new authorization logic
+      tags:
+        - Users
       responses:
         "200":
           description: User settings
@@ -1989,9 +2009,9 @@ components:
           type: number
           format: float
 
-    User:
+    User_1_0:
       type: object
-      description: User object
+      description: User object (legacy schema from version 1.0)
       required:
         - name
         - email
@@ -2005,6 +2025,68 @@ components:
         name:
           type: string
           description: User name
+        surname:
+          type: string
+          description: User family name
+        email:
+          type: string
+          format: email
+          description: User email
+        password:
+          type: string
+        homeLocation:
+          $ref: "#/components/schemas/FavouriteLocation"
+        workLocation:
+          $ref: "#/components/schemas/FavouriteLocation"
+        showMobileWelcomeScreen:
+          type: boolean
+        pollutantPenalties:
+          type: array
+          items:
+            $ref: "#/components/schemas/PollutantPenalty"
+          description: user's personal pollutant penalty settings
+        medicalConditions:
+          type: array
+          items:
+            type: string
+            format: uuid
+        transportPreference:
+          type: string
+          $ref: "#/components/schemas/TransportationType"
+        subscriptionStatus:
+          type: string
+          $ref: "#/components/schemas/SubscriptionStatus"
+          description: status of subscription. If any subscription is active, this will be ACTIVE.
+        trialAvailable:
+          type: boolean
+          description: if user is eligible for trial subscription
+          readOnly: true
+        activeSubscriptionTypes:
+          type: array
+          items:
+            $ref: "#/components/schemas/SubscriptionType"
+          description: types of subscriptions in currently ACTIVE state. Normally should have only one element.
+
+
+    User:
+      type: object
+      description: User object
+      required:
+        - username
+        - showMobileWelcomeScreen
+        - pollutantPenalties
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        username:
+          type: string
+          format: uuid
+          description: Username
+        firstname:
+          type: string
+          description: User first name
         surname:
           type: string
           description: User family name
