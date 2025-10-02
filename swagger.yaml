@@ -1653,7 +1653,7 @@ paths:
   /v1/city:
     get:
       summary: Get city metadata given the current lat/lon. Return Helsinki metadata if current lat/lon not in supported cities.
-      operationId: getRoutingModes
+      operationId: getCityMetadata
       tags:
         - City Metadata
       parameters:
