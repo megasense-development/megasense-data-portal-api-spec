@@ -1698,41 +1698,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CityMetadata'
-
-    put:
-      summary: Update city metadata
-      operationId: updateCityMetadata
-      tags:
-        - City Metadata
-      parameters:
-        - name: cityId
-          required: true
-          in: path
-          description: City ID
-          schema:
-            type: string
-            format: uuid
-      requestBody:
-        description: New city metadata
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CityMetadata"
-      responses:
-        "200":
-          description: City metatada
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CityMetadata"
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-   
 components:
   securitySchemes:
     bearerAuth:
@@ -2416,9 +2381,6 @@ components:
       type: object
       description: City metadata
       properties:
-        id:
-          type: string
-          format: uuid
         city:
           type: string
           description: City
@@ -2455,7 +2417,7 @@ components:
         boundary_lon_west:
           type: number
           format: float
-        boundary_lon_south:
+        boundary_lon_east:
           type: number
           format: float
     CityMetadataGET:
@@ -2466,3 +2428,6 @@ components:
             fallback:
               type: boolean
               description: Flag indicating the returned city metadata is of the current user's location or just fallback one.
+            id:
+              type: string
+              format: uuid
