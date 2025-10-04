@@ -1677,6 +1677,54 @@ paths:
           content:
             application/json:
               schema:
+                $ref: "#/components/schemas/CityMetadataGET"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add new city metadata entry
+      operationId: createNewCityMetadata
+      description: Add new city metadata entry
+      tags:
+        - City Metadata
+      requestBody:
+        description: City metadata
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityMetadata'
+
+    put:
+      summary: Update city metadata
+      operationId: updateCityMetadata
+      tags:
+        - City Metadata
+      parameters:
+        - name: cityId
+          required: true
+          in: path
+          description: City ID
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        description: New city metadata
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CityMetadata"
+      responses:
+        "200":
+          description: City metatada
+          content:
+            application/json:
+              schema:
                 $ref: "#/components/schemas/CityMetadata"
         default:
           description: unexpected error
@@ -2364,14 +2412,13 @@ components:
           type: boolean
         cardLast4:
           type: string
-
     CityMetadata:
       type: object
       description: City metadata
       properties:
-        fallback:
-          type: boolean
-          description: Flag indicating the returned city metadata is of the current user's location or just fallback one.
+        id:
+          type: string
+          format: uuid
         city:
           type: string
           description: City
@@ -2411,3 +2458,11 @@ components:
         boundary_lon_south:
           type: number
           format: float
+    CityMetadataGET:
+      allOf:
+        - $ref: '#/components/schemas/CityMetadata'
+        - type: object
+          properties:
+            fallback:
+              type: boolean
+              description: Flag indicating the returned city metadata is of the current user's location or just fallback one.
