@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.0.0
 info:
   version: 1.1.0
   title: Megasense data portal API
@@ -1698,6 +1698,13 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CityMetadata'
+      responses:
+        "200":
+          description: found routing modes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CityMetadataGET"
 components:
   securitySchemes:
     bearerAuth:
@@ -2391,9 +2398,8 @@ components:
           type: string
           description: Timezone
         pollutant_name_suffix:
-          oneOf:
-            - type: string
-            - type: 'null'
+          nullable: true
+          type: string
           description: Suffix added to pollutant name as fetching from Geoserver
         otp_url:
           type: string
