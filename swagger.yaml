@@ -111,14 +111,12 @@ paths:
           description: Route history type
           required: false
           schema:
-            type: string
             $ref: "#/components/schemas/RouteHistoryType"
         - name: transportationType
           in: query
           description: Route movement type
           required: false
           schema:
-            type: string
             $ref: "#/components/schemas/TransportationType"
         - name: accessRights
           in: query
@@ -1652,6 +1650,61 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /v1/city:
+    get:
+      summary: Get city metadata given the current lat/lon. Return Helsinki metadata if current lat/lon not in supported cities.
+      operationId: getCityMetadata
+      tags:
+        - City Metadata
+      parameters:
+        - name: lat
+          in: query
+          description: Latitude of current location
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: lon
+          in: query
+          description: Logitude of current location
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        "200":
+          description: found routing modes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CityMetadataGET"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Add new city metadata entry
+      operationId: createNewCityMetadata
+      description: Add new city metadata entry
+      tags:
+        - City Metadata
+      requestBody:
+        description: City metadata
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityMetadata'
+      responses:
+        "200":
+          description: found routing modes
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CityMetadataGET"
 components:
   securitySchemes:
     bearerAuth:
@@ -1797,10 +1850,8 @@ components:
         locationToName:
           type: string
         routeHistoryType:
-          type: string
           $ref: "#/components/schemas/RouteHistoryType"
         transportationType:
-          type: string
           $ref: "#/components/schemas/TransportationType"
         isPublic:
           type: boolean
@@ -2051,10 +2102,8 @@ components:
             type: string
             format: uuid
         transportPreference:
-          type: string
           $ref: "#/components/schemas/TransportationType"
         subscriptionStatus:
-          type: string
           $ref: "#/components/schemas/SubscriptionStatus"
           description: status of subscription. If any subscription is active, this will be ACTIVE.
         trialAvailable:
@@ -2066,7 +2115,6 @@ components:
           items:
             $ref: "#/components/schemas/SubscriptionType"
           description: types of subscriptions in currently ACTIVE state. Normally should have only one element.
-
 
     User:
       type: object
@@ -2113,10 +2161,8 @@ components:
             type: string
             format: uuid
         transportPreference:
-          type: string
           $ref: "#/components/schemas/TransportationType"
         subscriptionStatus:
-          type: string
           $ref: "#/components/schemas/SubscriptionStatus"
           description: status of subscription. If any subscription is active, this will be ACTIVE.
         trialAvailable:
@@ -2338,3 +2384,56 @@ components:
           type: boolean
         cardLast4:
           type: string
+    CityMetadata:
+      type: object
+      description: City metadata
+      properties:
+        city:
+          type: string
+          description: City
+        country:
+          type: string
+          description: Country
+        timezone:
+          type: string
+          description: Timezone
+        pollutant_name_suffix:
+          nullable: true
+          type: string
+          description: Suffix added to pollutant name as fetching from Geoserver
+        otp_url:
+          type: string
+          format: 'uri'
+          description: URL of OTP server
+        city_center_lat:
+          type: number
+          format: float
+        city_center_lon:
+          type: number
+          format: float
+        google_map_region:
+          type: string
+          description: Region string, used to call Google Maps API
+        boundary_lat_north:
+          type: number
+          format: float
+        boundary_lat_south:
+          type: number
+          format: float
+        boundary_lon_west:
+          type: number
+          format: float
+        boundary_lon_east:
+          type: number
+          format: float
+    CityMetadataGET:
+      allOf:
+        - $ref: '#/components/schemas/CityMetadata'
+        - type: object
+          properties:
+            fallback:
+              type: boolean
+              description: Flag indicating the returned city metadata is of the current user's location or just fallback one.
+            id:
+              type: string
+              format: uuid
